@@ -527,6 +527,10 @@ footer a:hover{color:var(--accent);}
           Voir le menu
         </button>
         <button class="bghost" onclick="goPage('menu')">Commander →</button>
+        <a id="heroIGBtn" href="https://instagram.com/isaoras_cookies" target="_blank" style="display:inline-flex;align-items:center;gap:.45rem;padding:.65rem 1.2rem;border-radius:50px;border:1.5px solid rgba(255,255,255,.1);background:rgba(255,255,255,.04);color:rgba(255,255,255,.7);font-size:.82rem;font-weight:700;text-decoration:none;transition:all .22s;backdrop-filter:blur(6px);" onmouseover="this.style.borderColor='rgba(253,29,29,.5)';this.style.color='#fff';this.style.background='rgba(131,58,180,.15)'" onmouseout="this.style.borderColor='rgba(255,255,255,.1)';this.style.color='rgba(255,255,255,.7)';this.style.background='rgba(255,255,255,.04)'">
+          <svg viewBox="0 0 24 24" fill="currentColor" style="width:14px;height:14px;background:linear-gradient(135deg,#833ab4,#fd1d1d,#fcb045);border-radius:4px;padding:2px;color:white;flex-shrink:0;"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg>
+          <span id="heroIGLabel">@isaoras_cookies</span>
+        </a>
       </div>
     </div>
     <div class="hr">
@@ -577,7 +581,7 @@ footer a:hover{color:var(--accent);}
     </div>
     <div class="cgrid" id="homeCookies"><div class="loading-full"><div class="spinner"></div> Chargement…</div></div>
   </div>
-  <footer><strong>Isaora's Cookies</strong> — Cayenne, Guyane 🇬🇫<br><span style="font-size:.74rem;">Cookie mi-cuit gourmand · <a href="https://instagram.com/isaoras_cookies" target="_blank">@isaoras_cookies</a></span></footer>
+  <footer><strong>Isaora's Cookies</strong> — Cayenne, Guyane 🇬🇫<br><span style="font-size:.74rem;">Cookie mi-cuit gourmand · <a id="footerIGLink" href="https://instagram.com/isaoras_cookies" target="_blank">@isaoras_cookies</a></span></footer>
 </div>
 
 <!-- ══ MENU ══ -->
@@ -817,11 +821,34 @@ footer a:hover{color:var(--accent);}
 // ══════════════════════════════════════════
 const SUPABASE_URL   = 'https://wjwmbbyxuctvuldxhqps.supabase.co';
 const SUPABASE_KEY   = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Indqd21iYnl4dWN0dnVsZHhocXBzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzMxNzM2MjQsImV4cCI6MjA4ODc0OTYyNH0.dcX4Q92A9kVqVIEsbyU51Eys52u0rJb_nQyikEm85Q4';
-const ADMIN_PHONE    = '33694132412'; // numéro test
-const ADMIN_INSTAGRAM = 'soy_kaeff'; // pseudo test
+
+// ── ADMIN CONTACTS ──
+const ADMIN_PHONE    = '594694132412'; // Guyane française (+594)
+const ADMIN_INSTAGRAM = 'isaoras_cookies'; // ← ton pseudo Instagram (sans @)
+const ADMIN_IG_URL    = `https://instagram.com/${ADMIN_INSTAGRAM}`; // lien profil public
 const ADMIN_USER     = 'isaora';
 const ADMIN_PASS     = 'cookies2025!';
 const SECRET_CLICKS  = 5;
+
+// ── INDICATIFS PAR RÉGION (pour le sélecteur client) ──
+const PHONE_REGIONS = [
+  { code: '+594', flag: '🇬🇫', label: 'Guyane',         digits: 9  },
+  { code: '+596', flag: '🇲🇶', label: 'Martinique',     digits: 9  },
+  { code: '+590', flag: '🇬🇵', label: 'Guadeloupe',     digits: 9  },
+  { code: '+262', flag: '🇷🇪', label: 'La Réunion',     digits: 9  },
+  { code: '+33',  flag: '🇫🇷', label: 'France métro',   digits: 10 },
+  { code: '+1',   flag: '🇺🇸', label: 'USA / Canada',   digits: 10 },
+  { code: '+44',  flag: '🇬🇧', label: 'Royaume-Uni',    digits: 10 },
+  { code: '+32',  flag: '🇧🇪', label: 'Belgique',       digits: 9  },
+  { code: '+41',  flag: '🇨🇭', label: 'Suisse',         digits: 9  },
+  { code: '+212', flag: '🇲🇦', label: 'Maroc',          digits: 9  },
+  { code: '+225', flag: '🇨🇮', label: "Côte d'Ivoire",  digits: 10 },
+  { code: '+237', flag: '🇨🇲', label: 'Cameroun',       digits: 9  },
+  { code: '+221', flag: '🇸🇳', label: 'Sénégal',        digits: 9  },
+  { code: '+509', flag: '🇭🇹', label: 'Haïti',          digits: 8  },
+  { code: '+55',  flag: '🇧🇷', label: 'Brésil',         digits: 11 },
+  { code: '+597', flag: '🇸🇷', label: 'Suriname',       digits: 7  },
+];
 // ══════════════════════════════════════════
 
 // Supabase init — ne plante jamais même si le CDN est indispo
@@ -1067,7 +1094,36 @@ function openOrder(){
   document.getElementById('moc').innerHTML=`<div class="mbody">
     <div class="osm"><h4>Résumé de votre commande</h4>${sumHTML}</div>
     <div class="fg"><label>Prénom & Nom</label><input type="text" id="oN" placeholder="Ex: Isaora"></div>
-    <div class="fg"><label>WhatsApp (numéro)</label><input type="text" id="oC" placeholder="Ex: +594 6XX XXX XXX"></div>
+    <div class="fg">
+      <label>WhatsApp</label>
+      <div style="display:flex;gap:.5rem;align-items:stretch;">
+        <div style="position:relative;flex-shrink:0;">
+          <select id="oRegion" style="height:100%;padding:.78rem .55rem .78rem .65rem;border:1.5px solid var(--border);border-radius:11px;font-size:.88rem;font-family:'Plus Jakarta Sans',sans-serif;color:var(--text);background:var(--surface2);outline:none;cursor:pointer;appearance:none;-webkit-appearance:none;padding-right:1.8rem;transition:border-color .2s;" onfocus="this.style.borderColor='var(--accent)'" onblur="this.style.borderColor='var(--border)'">
+            ${PHONE_REGIONS.map(r=>`<option value="${r.code}" ${r.code==='+594'?'selected':''}>${r.flag} ${r.code} ${r.label}</option>`).join('')}
+          </select>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="position:absolute;right:.5rem;top:50%;transform:translateY(-50%);width:12px;height:12px;color:var(--text3);pointer-events:none;"><polyline points="6 9 12 15 18 9"/></svg>
+        </div>
+        <input type="tel" id="oC" placeholder="694 12 24 12" style="flex:1;" oninput="this.value=this.value.replace(/[^0-9 ]/g,'')">
+      </div>
+      <div style="font-size:.7rem;color:var(--text3);margin-top:.38rem;display:flex;align-items:center;gap:.3rem;">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:11px;height:11px;flex-shrink:0;"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+        Sélectionne ton pays puis entre ton numéro sans le 0 initial
+      </div>
+    </div>
+    <div class="fg">
+      <label style="display:flex;align-items:center;gap:.4rem;">
+        <svg viewBox="0 0 24 24" fill="currentColor" style="width:12px;height:12px;background:linear-gradient(135deg,#833ab4,#fd1d1d,#fcb045);border-radius:3px;padding:1.5px;color:white;flex-shrink:0;"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg>
+        Instagram (optionnel)
+      </label>
+      <div style="position:relative;">
+        <span style="position:absolute;left:.9rem;top:50%;transform:translateY(-50%);color:var(--text3);font-size:.9rem;pointer-events:none;font-weight:700;">@</span>
+        <input type="text" id="oIG" placeholder="ton_pseudo_insta" style="padding-left:1.9rem;" oninput="this.value=this.value.replace(/[@\\s]/g,'')">
+      </div>
+      <div style="font-size:.7rem;color:var(--text3);margin-top:.38rem;display:flex;align-items:center;gap:.3rem;">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:11px;height:11px;flex-shrink:0;"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+        Si pas de WA, l'admin pourra te contacter en DM Instagram
+      </div>
+    </div>
     <div class="fg"><label>Classe</label><input type="text" id="oCl" placeholder="Ex: Terminale B, 2nde 4…"></div>
     <div class="fg"><label>Note (optionnel)</label><textarea id="oNote" placeholder="Allergie, heure préférée…"></textarea></div>
     <div class="pn">
@@ -1091,16 +1147,22 @@ function closeOrder(){ document.getElementById('mov').classList.remove('open'); 
 
 async function confirmOrder(tot){
   const name = document.getElementById('oN').value.trim();
-  const contact = document.getElementById('oC').value.trim();
+  const rawNum = document.getElementById('oC').value.trim().replace(/\D/g,'');
+  const region = document.getElementById('oRegion') ? document.getElementById('oRegion').value : '+594';
+  const cleanNum = rawNum.startsWith('0') ? rawNum.slice(1) : rawNum;
+  const regionDigits = region.replace('+','');
+  const contact = `${region} ${cleanNum.replace(/(\d{3})(?=\d)/g,'$1 ').trim()}`;
+  const contactWA = `${regionDigits}${cleanNum}`;
+  const clientIG = (document.getElementById('oIG')?.value || '').trim().replace(/[@\s]/g,'');
   const classe = document.getElementById('oCl').value.trim();
   const note = document.getElementById('oNote').value.trim();
-  if(!name||!contact){ showToast('Remplissez nom et contact !'); return; }
+  if(!name || (!cleanNum && !clientIG)){ showToast('Remplis ton nom + WhatsApp ou Instagram !', 'warning'); return; }
+  if(cleanNum && cleanNum.length < 6){ showToast('Numéro WhatsApp trop court !', 'warning'); return; }
 
   const btn = document.getElementById('confirmBtn');
   btn.disabled = true;
   btn.innerHTML = '<div class="spinner"></div> Envoi…';
 
-  // Build items array
   const items = [];
   Object.entries(cart).forEach(([id,qty])=>{
     const c=ck.find(x=>String(x.id)===String(id)); if(!c) return;
@@ -1113,6 +1175,8 @@ async function confirmOrder(tot){
       const {data, error} = await sb.from('orders').insert([{
         client_name: name,
         client_phone: contact,
+        client_phone_wa: contactWA,
+        client_instagram: clientIG || null,
         client_class: classe || 'Non précisée',
         client_note: note,
         items: items,
@@ -1122,16 +1186,18 @@ async function confirmOrder(tot){
       if(error) throw error;
       savedOrder = data;
     } else {
-      // localStorage fallback
       const orders = JSON.parse(localStorage.getItem('ic_orders')||'[]');
-      savedOrder = {id: Date.now(), client_name:name, client_phone:contact, client_class:classe||'Non précisée', client_note:note, items, total:tot, status:'pending', created_at:new Date().toISOString()};
+      savedOrder = {id: Date.now(), client_name:name, client_phone:contact, client_phone_wa:contactWA, client_instagram:clientIG||null, client_class:classe||'Non précisée', client_note:note, items, total:tot, status:'pending', created_at:new Date().toISOString()};
       orders.unshift(savedOrder);
       localStorage.setItem('ic_orders', JSON.stringify(orders));
     }
 
-    // Messages de notification admin
+    // Notif admin
     let msgAdmin = `🍪 *NOUVELLE COMMANDE – Isaora's Cookies*\n\n`;
-    msgAdmin += `👤 *Nom:* ${name}\n📞 *Contact:* ${contact}\n🏫 *Classe:* ${classe||'Non précisée'}\n`;
+    msgAdmin += `👤 *Nom:* ${name}\n`;
+    if(cleanNum) msgAdmin += `📞 *WhatsApp:* ${contact}\n`;
+    if(clientIG) msgAdmin += `📸 *Instagram:* @${clientIG}\n`;
+    msgAdmin += `🏫 *Classe:* ${classe||'Non précisée'}\n`;
     if(note) msgAdmin += `📝 *Note:* ${note}\n`;
     msgAdmin += `\n🛒 *Commande:*\n`;
     items.forEach(it => { msgAdmin += `• ${it.name} ×${it.qty} = ${it.sub.toFixed(2)}€\n`; });
@@ -1256,10 +1322,10 @@ function orderCardHTML(o){
     actionsHTML += `<button class="oa-btn oa-refuse" onclick="confirmRefuseOrder('${o.id}')">Annuler</button>`;
   }
 
-  // WhatsApp client contact
-  const phone = o.client_phone.replace(/\D/g,'');
-  if(phone.length >= 8){
-    actionsHTML += `<a href="https://wa.me/${phone}" target="_blank" class="oa-btn oa-wa">
+  // WhatsApp client contact — utilise client_phone_wa si dispo, sinon fallback
+  const phoneWA = o.client_phone_wa || o.client_phone.replace(/\D/g,'');
+  if(phoneWA.length >= 8){
+    actionsHTML += `<a href="https://wa.me/${phoneWA}" target="_blank" class="oa-btn oa-wa">
       <svg viewBox="0 0 24 24" fill="currentColor" style="width:13px;height:13px;"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
       WA Client
     </a>`;
@@ -1280,7 +1346,8 @@ function orderCardHTML(o){
     <div class="ocard-items">${itemsHTML}</div>
     <div class="ocard-total">Total : ${Number(o.total).toFixed(2)}€</div>
     <div class="ocard-contact">
-      <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.68 9.93 19.79 19.79 0 01.67 1.41 2 2 0 012.68 0h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L7.09 7.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0121 14.92z"/></svg>${o.client_phone}</span>
+      <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.68 9.93 19.79 19.79 0 01.67 1.41 2 2 0 012.68 0h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L7.09 7.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0121 14.92z"/></svg>${o.client_phone || '—'}</span>
+      ${o.client_instagram ? `<span><svg viewBox="0 0 24 24" fill="currentColor" style="width:13px;height:13px;background:linear-gradient(135deg,#833ab4,#fd1d1d,#fcb045);border-radius:3px;padding:1.5px;color:white;flex-shrink:0;"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg>@${o.client_instagram}</span>` : ''}
       ${o.client_note ? `<span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>${o.client_note}</span>` : ''}
     </div>
     <div class="ocard-actions" id="oca-${o.id}">${actionsHTML}</div>
@@ -1307,7 +1374,8 @@ async function updateOrderStatus(id, status, reason=''){
     const order = allOrders.find(o=>String(o.id)===String(id));
 
     if((status==='accepted' || status==='refused') && order){
-      const phone = order.client_phone.replace(/\D/g,'');
+      const phoneWA = order.client_phone_wa || order.client_phone.replace(/\D/g,'');
+      const clientIG = order.client_instagram || null;
       let msgClient = '';
 
       if(status==='accepted'){
@@ -1326,12 +1394,11 @@ async function updateOrderStatus(id, status, reason=''){
         msgClient += `N'hésites pas à repasser commande plus tard ! 🍪`;
       }
 
-      // Ouvre une popup avec choix WA ou Instagram
-      const waUrl = phone.length >= 8 ? `https://wa.me/${phone}?text=${encodeURIComponent(msgClient)}` : null;
-      const igUrl = `https://ig.me/m/${order.client_phone.replace('@','')}?text=${encodeURIComponent(msgClient)}`;
+      // WA → numéro du client | Instagram → profil du CLIENT (pour lui envoyer un DM)
+      const waUrl = phoneWA.length >= 8 ? `https://wa.me/${phoneWA}?text=${encodeURIComponent(msgClient)}` : null;
+      const igUrl = clientIG ? `https://ig.me/m/${clientIG}?text=${encodeURIComponent(msgClient)}` : null;
 
-      // Affiche modal de choix
-      showNotifModal(order.client_name, waUrl, igUrl, msgClient);
+      showNotifModal(order.client_name, waUrl, igUrl);
     }
 
     await loadOrders();
@@ -1610,6 +1677,20 @@ document.getElementById('uarea').addEventListener('click',()=>document.getElemen
   await loadCookies();
   rHome();
   updCart();
+
+  // ── Injecter dynamiquement le lien Instagram admin partout ──
+  // Footer
+  const footerLink = document.getElementById('footerIGLink');
+  if(footerLink){ footerLink.href = ADMIN_IG_URL; footerLink.textContent = `@${ADMIN_INSTAGRAM}`; }
+  // Bouton hero
+  const heroBtn = document.getElementById('heroIGBtn');
+  if(heroBtn) heroBtn.href = ADMIN_IG_URL;
+  const heroLabel = document.getElementById('heroIGLabel');
+  if(heroLabel) heroLabel.textContent = `@${ADMIN_INSTAGRAM}`;
+  // Bannière défilante (2 occurrences)
+  document.querySelectorAll('.mp').forEach(el => {
+    if(el.textContent.startsWith('@')){ el.innerHTML = `<svg viewBox="0 0 24 24" fill="currentColor" style="width:11px;height:11px;background:linear-gradient(135deg,#833ab4,#fd1d1d,#fcb045);border-radius:2px;padding:1px;color:white;margin-right:3px;"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg><a href="${ADMIN_IG_URL}" target="_blank" style="color:inherit;text-decoration:none;">@${ADMIN_INSTAGRAM}</a>`; }
+  });
 })();
 </script>
 </body>
