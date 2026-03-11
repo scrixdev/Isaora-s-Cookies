@@ -8,6 +8,8 @@
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,700;0,900;1,700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <!-- Supabase -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<!-- EmailJS -->
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
 <style>
 :root{
   /* Dark palette */
@@ -824,12 +826,19 @@ const SUPABASE_KEY   = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmF
 
 // ── ADMIN CONTACTS ──
 const ADMIN_PHONE    = '594694132412'; // Guyane française (+594)
-const CALLMEBOT_KEY  = 'REMPLACE_PAR_TA_CLE_CALLMEBOT'; // ← ta clé CallMeBot
-const ADMIN_INSTAGRAM = 'isaoras_cookies'; // ← ton pseudo Instagram (sans @)
-const ADMIN_IG_URL    = `https://instagram.com/${ADMIN_INSTAGRAM}`; // lien profil public
+const ADMIN_INSTAGRAM = 'isaoras_cookies';
+const ADMIN_IG_URL    = `https://instagram.com/${ADMIN_INSTAGRAM}`;
 const ADMIN_USER     = 'isaora';
 const ADMIN_PASS     = 'cookies2025!';
 const SECRET_CLICKS  = 5;
+
+// ── EMAILJS CONFIG ──
+const EMAILJS_PUBLIC_KEY    = 'sb_publishable_6n-N-6O2hsBWOS13feWLfQ_18q4YIJo';
+const EMAILJS_SERVICE_ID    = 'service_grzjvtb';
+const EMAILJS_TPL_ADMIN     = 'template_hf7f2ce';
+const EMAILJS_TPL_CLIENT    = 'template_sz9iv27';
+const ADMIN_EMAIL           = 'suco.the.shadows@gmail.com';
+// ─────────────────────────────────────────
 
 // ── INDICATIFS PAR RÉGION (pour le sélecteur client) ──
 const PHONE_REGIONS = [
@@ -1096,6 +1105,17 @@ function openOrder(){
     <div class="osm"><h4>Résumé de votre commande</h4>${sumHTML}</div>
     <div class="fg"><label>Prénom & Nom</label><input type="text" id="oN" placeholder="Ex: Isaora"></div>
     <div class="fg">
+      <label style="display:flex;align-items:center;gap:.4rem;">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:12px;height:12px;flex-shrink:0;"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+        Email (optionnel)
+      </label>
+      <input type="email" id="oEmail" placeholder="ton.email@gmail.com">
+      <div style="font-size:.7rem;color:var(--text3);margin-top:.38rem;display:flex;align-items:center;gap:.3rem;">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:11px;height:11px;flex-shrink:0;"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+        Tu recevras un email quand ta commande est traitée
+      </div>
+    </div>
+    <div class="fg">
       <label>WhatsApp</label>
       <div style="display:flex;gap:.5rem;align-items:stretch;">
         <div style="position:relative;flex-shrink:0;">
@@ -1155,9 +1175,10 @@ async function confirmOrder(tot){
   const contact = `${region} ${cleanNum.replace(/(\d{3})(?=\d)/g,'$1 ').trim()}`;
   const contactWA = `${regionDigits}${cleanNum}`;
   const clientIG = (document.getElementById('oIG')?.value || '').trim().replace(/[@\s]/g,'');
+  const clientEmail = (document.getElementById('oEmail')?.value || '').trim();
   const classe = document.getElementById('oCl').value.trim();
   const note = document.getElementById('oNote').value.trim();
-  if(!name || (!cleanNum && !clientIG)){ showToast('Remplis ton nom + WhatsApp ou Instagram !', 'warning'); return; }
+  if(!name || (!cleanNum && !clientIG && !clientEmail)){ showToast('Remplis ton nom + WhatsApp, Instagram ou Email !', 'warning'); return; }
   if(cleanNum && cleanNum.length < 6){ showToast('Numéro WhatsApp trop court !', 'warning'); return; }
 
   const btn = document.getElementById('confirmBtn');
@@ -1178,6 +1199,7 @@ async function confirmOrder(tot){
         client_phone: contact,
         client_phone_wa: contactWA,
         client_instagram: clientIG || null,
+        client_email: clientEmail || null,
         client_class: classe || 'Non précisée',
         client_note: note,
         items: items,
@@ -1188,7 +1210,7 @@ async function confirmOrder(tot){
       savedOrder = data;
     } else {
       const orders = JSON.parse(localStorage.getItem('ic_orders')||'[]');
-      savedOrder = {id: Date.now(), client_name:name, client_phone:contact, client_phone_wa:contactWA, client_instagram:clientIG||null, client_class:classe||'Non précisée', client_note:note, items, total:tot, status:'pending', created_at:new Date().toISOString()};
+      savedOrder = {id: Date.now(), client_name:name, client_phone:contact, client_phone_wa:contactWA, client_instagram:clientIG||null, client_email:clientEmail||null, client_class:classe||'Non précisée', client_note:note, items, total:tot, status:'pending', created_at:new Date().toISOString()};
       orders.unshift(savedOrder);
       localStorage.setItem('ic_orders', JSON.stringify(orders));
     }
@@ -1198,6 +1220,7 @@ async function confirmOrder(tot){
     msgAdmin += `👤 *Nom:* ${name}\n`;
     if(cleanNum) msgAdmin += `📞 *WhatsApp:* ${contact}\n`;
     if(clientIG) msgAdmin += `📸 *Instagram:* @${clientIG}\n`;
+    if(clientEmail) msgAdmin += `📧 *Email:* ${clientEmail}\n`;
     msgAdmin += `🏫 *Classe:* ${classe||'Non précisée'}\n`;
     if(note) msgAdmin += `📝 *Note:* ${note}\n`;
     msgAdmin += `\n🛒 *Commande:*\n`;
@@ -1205,33 +1228,41 @@ async function confirmOrder(tot){
     msgAdmin += `\n💰 *Total: ${tot}€*\n💵 Paiement en espèces au lycée\n`;
     msgAdmin += `\n👉 Va sur le panel admin pour accepter ou refuser.`;
 
-    // ── Envoi auto WA à l'admin via CallMeBot ──
-    if(CALLMEBOT_KEY !== 'REMPLACE_PAR_TA_CLE_CALLMEBOT'){
+    // ── Email auto à l'admin ──
+    if(EMAILJS_PUBLIC_KEY !== 'REMPLACE_PAR_TA_CLE_PUBLIQUE'){
       try {
-        await fetch(`https://api.callmebot.com/whatsapp.php?phone=${ADMIN_PHONE}&text=${encodeURIComponent(msgAdmin)}&apikey=${CALLMEBOT_KEY}`);
-      } catch(e){ console.warn('CallMeBot:', e); }
+        emailjs.init(EMAILJS_PUBLIC_KEY);
+        const itemsText = items.map(it=>`${it.name} ×${it.qty} = ${it.sub.toFixed(2)}€`).join('\n');
+        await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TPL_ADMIN, {
+          to_email:    ADMIN_EMAIL,
+          client_name: name,
+          client_phone: cleanNum ? contact : '—',
+          client_instagram: clientIG ? '@'+clientIG : '—',
+          client_email: clientEmail || '—',
+          client_class: classe || 'Non précisée',
+          client_note:  note || '—',
+          items_text:   itemsText,
+          total:        tot + '€',
+        });
+      } catch(e){ console.warn('EmailJS admin:', e); }
     }
 
     const igAdmin = `https://ig.me/m/${ADMIN_INSTAGRAM}`;
 
     rstCart();
 
-    // Bouton Instagram seulement si le client n'a pas de WA
-    const igBtnHTML = (!cleanNum && clientIG) ? `
-      <div style="background:rgba(255,255,255,.04);border:1px solid var(--border2);border-radius:12px;padding:.75rem 1rem;margin:.5rem 0 .8rem;font-size:.78rem;color:var(--text2);text-align:left;">
-        ℹ️ Tu n'as pas de WhatsApp — notifie l'admin via Instagram pour qu'elle traite ta commande :
-      </div>
-      <button onclick="navigator.clipboard.writeText(${JSON.stringify(msgAdmin)}).then(()=>{ this.textContent='✅ Copié ! Ouvre Instagram…'; setTimeout(()=>window.open('${igAdmin}','_blank'),600); })" class="wabtn" style="width:100%;justify-content:center;background:linear-gradient(135deg,#833ab4,#fd1d1d,#fcb045);box-shadow:0 8px 22px rgba(131,58,180,.35);border:none;cursor:pointer;">
-        <svg viewBox="0 0 24 24" fill="currentColor" style="width:19px;height:19px;"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg>
-        Copier le msg & ouvrir Instagram
-      </button>` : '';
+    const notifLine = cleanNum
+      ? "L'admin a été notifiée automatiquement par email ✅"
+      : clientEmail
+        ? "L'admin a été notifiée par email ✅"
+        : "Commande bien enregistrée ✅";
 
     document.getElementById('moc').innerHTML=`<div class="succ">
       <div class="succ-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg></div>
       <h2>Commande enregistrée !</h2>
       <div style="background:var(--green-bg);border:1px solid rgba(34,197,94,.25);border-radius:12px;padding:.75rem 1rem;margin:.6rem 0 .8rem;font-size:.82rem;color:var(--green);font-weight:700;display:flex;align-items:center;gap:.5rem;">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="width:16px;height:16px;flex-shrink:0;"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.68 9.93 19.79 19.79 0 01.67 1.41 2 2 0 012.68 0h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L7.09 7.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0121 14.92z"/></svg>
-        ${cleanNum ? "L'admin a été notifiée automatiquement sur WhatsApp ✅" : "Commande bien enregistrée ✅"}
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="width:16px;height:16px;flex-shrink:0;"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+        ${notifLine}
       </div>
       <div style="background:var(--surface2);border:1px solid var(--border2);border-radius:14px;padding:1rem 1.2rem;margin:.4rem 0 .8rem;text-align:left;font-size:.82rem;display:flex;flex-direction:column;gap:.45rem;">
         <div style="display:flex;justify-content:space-between;"><span style="color:var(--text2);">👤 Nom</span><span style="font-weight:800;color:var(--text);">${name}</span></div>
@@ -1240,8 +1271,11 @@ async function confirmOrder(tot){
         <div style="border-top:1px solid var(--border);padding-top:.45rem;margin-top:.1rem;">${items.map(it=>`<div style="display:flex;justify-content:space-between;"><span style="color:var(--text2);">🍪 ${it.name} ×${it.qty}</span><span style="font-weight:700;color:var(--accent);">${it.sub.toFixed(2)}€</span></div>`).join('')}</div>
         <div style="display:flex;justify-content:space-between;border-top:1px solid var(--border);padding-top:.45rem;margin-top:.1rem;"><span style="font-weight:800;color:var(--text);">💰 Total</span><span style="font-family:'Fraunces',serif;font-size:1rem;font-weight:900;color:var(--accent);">${tot}€</span></div>
       </div>
-      ${igBtnHTML}
-      <p style="font-size:.75rem;color:var(--text3);margin-top:.3rem;">L'admin va traiter ta commande et te répondre dès que possible.</p>
+      ${(!cleanNum && clientIG) ? `<button onclick="navigator.clipboard.writeText(${JSON.stringify(msgAdmin)}).then(()=>{ this.textContent='✅ Copié ! Ouverture…'; setTimeout(()=>window.open('${igAdmin}','_blank'),600); })" class="wabtn" style="width:100%;justify-content:center;background:linear-gradient(135deg,#833ab4,#fd1d1d,#fcb045);box-shadow:0 8px 22px rgba(131,58,180,.35);border:none;cursor:pointer;margin-bottom:.5rem;">
+        <svg viewBox="0 0 24 24" fill="currentColor" style="width:19px;height:19px;"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg>
+        Notifier l'admin sur Instagram
+      </button>` : ''}
+      <p style="font-size:.75rem;color:var(--text3);">L'admin va traiter ta commande et te répondre dès que possible.</p>
       <button class="bcnl" onclick="closeOrder();" style="margin-top:.6rem;">Fermer</button>
     </div>`;
 
@@ -1253,6 +1287,54 @@ async function confirmOrder(tot){
   }
 }
 function rstCart(){ cart={}; updCart(); }
+
+// ── DELETE ORDER ──
+function confirmDeleteOrder(id){
+  const old = document.getElementById('modalDeleteOrder');
+  if(old) old.remove();
+  const div = document.createElement('div');
+  div.id = 'modalDeleteOrder';
+  div.className = 'action-modal-overlay open';
+  div.innerHTML = `
+    <div class="action-modal-box glow-danger" style="border:1px solid rgba(254,44,85,.12);">
+      <div class="action-modal-inner">
+        <div class="modal-icon-badge danger">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#fe2c55" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4h6v2"/></svg>
+        </div>
+        <div class="modal-animate-in">
+          <div class="action-modal-title">Supprimer la commande ?</div>
+          <div class="action-modal-desc">Cette commande refusée sera <strong>définitivement supprimée</strong>. Action irréversible.</div>
+          <div class="action-modal-actions">
+            <button class="action-modal-btn btn-danger" id="confirmDeleteOrderBtn" onmousemove="this.style.setProperty('--rx',(event.offsetX/this.offsetWidth*100)+'%');this.style.setProperty('--ry',(event.offsetY/this.offsetHeight*100)+'%')">
+              <span class="btn-inner"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/></svg>Oui, supprimer</span>
+            </button>
+            <div class="action-modal-separator"></div>
+            <button class="action-modal-btn btn-cancel" onclick="document.getElementById('modalDeleteOrder').remove()">Annuler</button>
+          </div>
+        </div>
+      </div>
+    </div>`;
+  div.onclick = function(e){ if(e.target===div) div.remove(); };
+  document.body.appendChild(div);
+  document.getElementById('confirmDeleteOrderBtn').onclick = async function(){
+    div.remove();
+    try {
+      if(sb){
+        const {error} = await sb.from('orders').delete().eq('id', id);
+        if(error) throw error;
+      } else {
+        let orders = JSON.parse(localStorage.getItem('ic_orders')||'[]');
+        orders = orders.filter(o=>String(o.id)!==String(id));
+        localStorage.setItem('ic_orders', JSON.stringify(orders));
+      }
+      await loadOrders();
+      showToast('🗑️ Commande supprimée.', 'success');
+    } catch(e){
+      console.error('deleteOrder:', e);
+      showToast('Erreur lors de la suppression.', 'error');
+    }
+  };
+}
 
 // ── ADMIN ──
 function chkAdmin(){
@@ -1338,6 +1420,12 @@ function orderCardHTML(o){
     actionsHTML += `<span style="font-size:.78rem;color:var(--green);font-weight:800;">✅ Commande confirmée</span>`;
     actionsHTML += `<button class="oa-btn oa-refuse" onclick="confirmRefuseOrder('${o.id}')">Annuler</button>`;
   }
+  if(o.status==='refused'){
+    actionsHTML += `<button class="oa-btn oa-refuse" onclick="confirmDeleteOrder('${o.id}')" style="display:flex;align-items:center;gap:.3rem;">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="width:13px;height:13px;"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4h6v2"/></svg>
+      Supprimer
+    </button>`;
+  }
 
   // WhatsApp client contact — utilise client_phone_wa si dispo, sinon fallback
   const phoneWA = o.client_phone_wa || o.client_phone.replace(/\D/g,'');
@@ -1411,9 +1499,27 @@ async function updateOrderStatus(id, status, reason=''){
         msgClient += `N'hésites pas à repasser commande plus tard ! 🍪`;
       }
 
-      // WA → numéro du client | Instagram → profil du CLIENT (pour lui envoyer un DM)
+      // WA → numéro du client | Instagram → profil du CLIENT
       const waUrl = phoneWA.length >= 8 ? `https://wa.me/${phoneWA}?text=${encodeURIComponent(msgClient)}` : null;
       const igUrl = clientIG ? `https://ig.me/m/${clientIG}` : null;
+
+      // ── Email auto au client ──
+      if(EMAILJS_PUBLIC_KEY !== 'REMPLACE_PAR_TA_CLE_PUBLIQUE' && order.client_email){
+        try {
+          emailjs.init(EMAILJS_PUBLIC_KEY);
+          const itemsText = (order.items||[]).map(it=>`${it.name} ×${it.qty} — ${Number(it.sub).toFixed(2)}€`).join('\n');
+          const subjectMap = {accepted:'✅ Commande confirmée !', refused:'❌ Commande refusée', waiting:'⏸ Commande en suspens'};
+          await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TPL_CLIENT, {
+            to_email:     order.client_email,
+            to_name:      order.client_name,
+            status_label: subjectMap[status] || status,
+            items_text:   itemsText,
+            total:        Number(order.total).toFixed(2) + '€',
+            refuse_reason: reason || '—',
+            message:      msgClient,
+          });
+        } catch(e){ console.warn('EmailJS client:', e); }
+      }
 
       showNotifModal(order.client_name, waUrl, igUrl, msgClient);
     }
@@ -1623,7 +1729,6 @@ function confirmRefuseOrder(id){
 function showNotifModal(clientName, waUrl, igUrl, msgClient){
   const old = document.getElementById('notifModal');
   if(old) old.remove();
-
   const div = document.createElement('div');
   div.id = 'notifModal';
   div.className = 'action-modal-overlay open';
@@ -1657,15 +1762,13 @@ function showNotifModal(clientName, waUrl, igUrl, msgClient){
     </div>`;
   div.onclick = function(e){ if(e.target===div) div.remove(); };
   document.body.appendChild(div);
-
-  // Bouton Instagram : copie le texte puis ouvre le DM
   const igBtn = document.getElementById('igNotifBtn');
   if(igBtn && msgClient){
     igBtn.onclick = function(){
       navigator.clipboard.writeText(msgClient).then(()=>{
         igBtn.querySelector('.btn-inner').textContent = '✅ Copié ! Ouverture…';
-        setTimeout(()=>{ window.open(igUrl, '_blank'); document.getElementById('notifModal').remove(); }, 700);
-      }).catch(()=>{ window.open(igUrl, '_blank'); document.getElementById('notifModal').remove(); });
+        setTimeout(()=>{ window.open(igUrl,'_blank'); document.getElementById('notifModal')?.remove(); }, 700);
+      }).catch(()=>{ window.open(igUrl,'_blank'); document.getElementById('notifModal')?.remove(); });
     };
   }
 }
