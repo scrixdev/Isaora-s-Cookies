@@ -1478,7 +1478,7 @@ async function updateOrderStatus(id, status, reason=''){
     // Notification client
     const order = allOrders.find(o=>String(o.id)===String(id));
 
-    if((status==='accepted' || status==='refused') && order){
+    if((status==='accepted' || status==='refused' || status==='waiting') && order){
       const phoneWA = order.client_phone_wa || order.client_phone.replace(/\D/g,'');
       const clientIG = order.client_instagram || null;
       let msgClient = '';
@@ -1491,6 +1491,14 @@ async function updateOrderStatus(id, status, reason=''){
         (order.items||[]).forEach(it=>{ msgClient += `• ${it.name} × ${it.qty}\n`; });
         msgClient += `\n💰 *Total : ${Number(order.total).toFixed(2)}€*\n`;
         msgClient += `💵 Paiement en espèces au lycée lors de la remise.\n\nMerci et à bientôt ! 🍪`;
+      } else if(status==='waiting'){
+        msgClient = `🍪 *Isaora's Cookies – Commande en suspens*\n\n`;
+        msgClient += `Bonjour ${order.client_name},\n\n`;
+        msgClient += `⏸ Ta commande est actuellement *en suspens*.\n\n`;
+        msgClient += `🛒 *Détails :*\n`;
+        (order.items||[]).forEach(it=>{ msgClient += `• ${it.name} × ${it.qty}\n`; });
+        msgClient += `\n💰 *Total : ${Number(order.total).toFixed(2)}€*\n\n`;
+        msgClient += `Nous reviendrons vers toi très prochainement pour confirmer ou annuler ta commande. 🍪`;
       } else {
         msgClient = `🍪 *Isaora's Cookies – Commande Refusée*\n\n`;
         msgClient += `Bonjour ${order.client_name},\n\n`;
