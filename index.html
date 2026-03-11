@@ -84,8 +84,9 @@ nav{
 .fly svg{width:28px;height:28px;color:white;}
 
 /* ── HERO ── */
-.hero{padding-top:62px;min-height:100vh;background:var(--bg);display:grid;grid-template-columns:1fr 1fr;position:relative;overflow:hidden;}
-.hero-glow{position:absolute;top:-200px;left:-100px;width:600px;height:600px;border-radius:50%;background:radial-gradient(circle,rgba(232,151,46,.15) 0%,transparent 70%);pointer-events:none;}
+.hero{padding-top:62px;min-height:100vh;background:var(--bg);display:grid;grid-template-columns:1fr 1fr;position:relative;overflow:hidden;width:100%;}
+.hero-glow{position:absolute;top:50%;left:25%;transform:translate(-50%,-50%);width:700px;height:700px;border-radius:50%;background:radial-gradient(circle,rgba(232,151,46,.14) 0%,transparent 70%);pointer-events:none;}
+.hero-glow2{position:absolute;top:50%;right:-5%;transform:translateY(-50%);width:600px;height:600px;border-radius:50%;background:radial-gradient(circle,rgba(232,151,46,.12) 0%,transparent 70%);pointer-events:none;}
 .hero-grain{position:absolute;inset:0;opacity:.4;pointer-events:none;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.75' numOctaves='4'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.04'/%3E%3C/svg%3E");}
 .hl{padding:5rem 4rem;display:flex;flex-direction:column;justify-content:center;position:relative;z-index:2;}
 .hero-tag{display:inline-flex;align-items:center;gap:.45rem;background:rgba(232,151,46,.12);border:1px solid rgba(232,151,46,.3);color:var(--accent);padding:.32rem .9rem;border-radius:50px;font-size:.72rem;font-weight:800;text-transform:uppercase;letter-spacing:.1em;margin-bottom:2rem;width:fit-content;animation:up .7s both;}
@@ -99,17 +100,29 @@ nav{
 .bfill svg{width:15px;height:15px;}
 .bghost{background:none;color:var(--text2);border:1px solid var(--border2);padding:.82rem 1.75rem;border-radius:50px;font-family:'Plus Jakarta Sans',sans-serif;font-size:.9rem;font-weight:600;cursor:pointer;transition:all .25s;}
 .bghost:hover{border-color:var(--accent);color:var(--accent);}
-.hr{display:flex;align-items:center;justify-content:center;position:relative;z-index:2;animation:up .8s .15s both;}
-.hero-wrap{width:340px;height:340px;position:relative;}
-.hero-circle{width:100%;height:100%;border-radius:50%;background:radial-gradient(135deg at 40% 40%,#3a2010,#1a0e06,#0d0704);display:flex;align-items:center;justify-content:center;box-shadow:0 40px 100px rgba(0,0,0,.7),inset 0 -8px 30px rgba(0,0,0,.5),0 0 0 1px rgba(232,151,46,.15);}
-.hero-circle svg{width:150px;height:150px;color:var(--accent);opacity:.75;}
-.pr{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:390px;height:390px;border-radius:50%;border:1px solid rgba(232,151,46,.15);animation:pulse 3s ease-out infinite;}
+
+/* hero right — big cookie */
+.hr{display:flex;align-items:center;justify-content:center;position:relative;z-index:2;animation:up .8s .15s both;padding:2rem;}
+.hero-wrap{width:min(480px,90%);height:min(480px,90vw);position:relative;cursor:pointer;}
+@keyframes cookieSpin{from{transform:rotate(0deg);}to{transform:rotate(360deg);}}
+@keyframes cookieSpinSlow{0%{transform:rotate(0deg) scale(1);}50%{transform:rotate(180deg) scale(1.04);}100%{transform:rotate(360deg) scale(1);}}
+.hero-cookie-svg{
+  width:100%;height:100%;
+  filter:drop-shadow(0 0 40px rgba(232,151,46,.45)) drop-shadow(0 0 80px rgba(232,151,46,.2));
+  transition:filter .4s ease;
+  animation:fy 5s ease-in-out infinite;
+}
+.hero-wrap:hover .hero-cookie-svg{
+  animation:cookieSpinSlow 2.5s cubic-bezier(.34,1.2,.64,1) forwards;
+  filter:drop-shadow(0 30px 100px rgba(232,151,46,.6)) drop-shadow(0 0 60px rgba(232,151,46,.3));
+}
+.pr{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:460px;height:460px;border-radius:50%;border:1px solid rgba(232,151,46,.12);animation:pulse 3s ease-out infinite;}
 .pr:nth-child(2){animation-delay:1.5s;}
-.hfl{position:absolute;background:var(--surface2);border:1px solid var(--border2);border-radius:14px;padding:.65rem .95rem;box-shadow:var(--sh2);display:flex;align-items:center;gap:.45rem;}
+.hfl{position:absolute;background:rgba(20,20,22,.85);backdrop-filter:blur(16px);border:1px solid rgba(255,255,255,.08);border-radius:16px;padding:.65rem .95rem;box-shadow:0 8px 32px rgba(0,0,0,.4);display:flex;align-items:center;gap:.45rem;}
 .hfl svg{width:16px;height:16px;color:var(--accent);}
 .hfl span{font-size:.7rem;font-weight:800;color:var(--text);}
-.hf1{top:8%;right:-6%;animation:fy 3s ease-in-out infinite;}
-.hf2{bottom:10%;left:-9%;animation:fy 3s 1.5s ease-in-out infinite;}
+.hf1{top:6%;right:-4%;animation:fy 3s ease-in-out infinite;}
+.hf2{bottom:8%;left:-8%;animation:fy 3s 1.5s ease-in-out infinite;}
 
 /* ── MARQUEE ── */
 .mq{background:var(--surface2);border-top:1px solid var(--border);border-bottom:1px solid var(--border);padding:.85rem 0;overflow:hidden;}
@@ -118,7 +131,7 @@ nav{
 .mp svg{width:12px;height:12px;}
 
 /* ── FEATURES ── */
-.feats{max-width:1080px;margin:0 auto;padding:4rem 2rem;display:grid;grid-template-columns:repeat(3,1fr);gap:1.4rem;}
+.feats{width:100%;padding:4rem 4rem;display:grid;grid-template-columns:repeat(3,1fr);gap:1.4rem;}
 .feat{background:var(--surface);border-radius:20px;padding:1.75rem;border:1px solid var(--border);transition:all .3s;}
 .feat:hover{transform:translateY(-4px);border-color:var(--border2);box-shadow:var(--sh2);}
 .fi{width:46px;height:46px;border-radius:13px;background:rgba(232,151,46,.1);display:flex;align-items:center;justify-content:center;margin-bottom:1.1rem;}
@@ -127,7 +140,7 @@ nav{
 .feat p{font-size:.82rem;color:var(--text2);line-height:1.6;}
 
 /* ── PREVIEW ── */
-.prev{max-width:1080px;margin:0 auto;padding:2rem 2rem 5rem;}
+.prev{width:100%;padding:2rem 4rem 5rem;}
 .shd{display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:2.2rem;}
 .slbl{font-size:.68rem;text-transform:uppercase;letter-spacing:.15em;color:var(--accent);font-weight:800;margin-bottom:.35rem;}
 .sttl{font-family:'Fraunces',serif;font-size:clamp(1.7rem,2.5vw,2.3rem);font-weight:900;color:var(--text);line-height:1.1;}
@@ -136,7 +149,7 @@ nav{
 .sa svg{width:13px;height:13px;}
 
 /* ── MENU TOP ── */
-.mtop{padding-top:62px;background:var(--surface);position:relative;overflow:hidden;border-bottom:1px solid var(--border);}
+.mtop{padding-top:62px;background:var(--bg);position:relative;overflow:hidden;border-bottom:1px solid var(--border);}
 .mtop::after{content:'';position:absolute;bottom:0;left:0;right:0;height:52px;background:var(--bg);border-radius:52px 52px 0 0;}
 .mtop-in{max-width:1080px;margin:0 auto;padding:3rem 2rem 1.5rem;text-align:center;position:relative;z-index:1;}
 .mtop-in .slbl{color:var(--accent);}
@@ -147,7 +160,7 @@ nav{
 .ft.on,.ft:hover{background:var(--gradient);color:white;border-color:transparent;box-shadow:0 4px 14px var(--accent-glow);}
 
 /* ── COOKIE GRID ── */
-.cgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(275px,1fr));gap:1.4rem;padding:2rem;max-width:1080px;margin:0 auto;}
+.cgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:1.4rem;padding:0;}
 .ccard{background:var(--surface);border-radius:22px;overflow:hidden;box-shadow:var(--sh);border:1px solid var(--border);transition:all .35s cubic-bezier(.175,.885,.32,1.1);}
 .ccard:hover{transform:translateY(-6px);border-color:var(--border2);box-shadow:var(--sh2);}
 .cimg{height:205px;position:relative;overflow:hidden;display:flex;align-items:center;justify-content:center;background:var(--surface2);}
@@ -398,7 +411,7 @@ nav{
 .loading-full{display:flex;align-items:center;justify-content:center;padding:4rem;gap:.8rem;color:var(--text3);font-size:.88rem;}
 
 /* ── TOAST PREMIUM ── */
-#toastContainer{position:fixed;top:1.5rem;right:1.5rem;z-index:99998;display:flex;flex-direction:column;align-items:flex-end;gap:.6rem;pointer-events:none;width:max-content;max-width:90vw;}
+#toastContainer{position:fixed;top:1.5rem;left:1.5rem;z-index:99998;display:flex;flex-direction:column;align-items:flex-start;gap:.6rem;pointer-events:none;width:max-content;max-width:90vw;}
 .toast{display:flex;align-items:center;gap:12px;padding:12px 14px;border-radius:16px;font-family:'Plus Jakarta Sans',sans-serif;pointer-events:auto;min-width:260px;max-width:340px;background:#1c1c1e;box-shadow:0 8px 32px rgba(0,0,0,.55),0 2px 8px rgba(0,0,0,.3);transform:translateY(20px) scale(.92);opacity:0;transition:transform .35s cubic-bezier(.34,1.56,.64,1),opacity .25s ease;will-change:transform,opacity;}
 .toast.show{transform:translateY(0) scale(1);opacity:1;}
 .toast.hiding{transform:translateY(10px) scale(.9);opacity:0;transition:transform .2s ease,opacity .2s ease;}
@@ -542,7 +555,7 @@ footer a:hover{color:var(--accent);}
 <!-- ══ HOME ══ -->
 <div id="home" class="page active">
   <div class="hero">
-    <div class="hero-grain"></div><div class="hero-glow"></div>
+    <div class="hero-grain"></div><div class="hero-glow"></div><div class="hero-glow2"></div>
     <div class="hl">
       <div class="hero-tag">
         <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.4 7.4H22l-6.2 4.5 2.4 7.4L12 17l-6.2 4.3 2.4-7.4L2 9.4h7.6z"/></svg>
@@ -565,9 +578,78 @@ footer a:hover{color:var(--accent);}
     <div class="hr">
       <div class="hero-wrap">
         <div class="pr"></div><div class="pr"></div>
-        <div class="hero-circle">
-          <svg viewBox="0 0 100 100" fill="none"><circle cx="50" cy="50" r="46" fill="rgba(253,244,231,.1)"/><circle cx="35" cy="38" r="8" fill="#3D1A08"/><circle cx="60" cy="30" r="6" fill="#3D1A08"/><circle cx="68" cy="55" r="8" fill="#3D1A08"/><circle cx="42" cy="65" r="6" fill="#3D1A08"/><circle cx="22" cy="58" r="5" fill="#3D1A08"/><circle cx="56" cy="72" r="5" fill="#3D1A08"/></svg>
-        </div>
+        <svg class="hero-cookie-svg" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <radialGradient id="cbase" cx="38%" cy="32%" r="72%">
+              <stop offset="0%" stop-color="#E8963A"/>
+              <stop offset="35%" stop-color="#C97228"/>
+              <stop offset="70%" stop-color="#9B4E14"/>
+              <stop offset="100%" stop-color="#6B2E08"/>
+            </radialGradient>
+            <radialGradient id="chip1" cx="40%" cy="30%" r="65%">
+              <stop offset="0%" stop-color="#3D1A06"/>
+              <stop offset="100%" stop-color="#0E0502"/>
+            </radialGradient>
+            <radialGradient id="chip2" cx="35%" cy="28%" r="65%">
+              <stop offset="0%" stop-color="#4A2008"/>
+              <stop offset="100%" stop-color="#120603"/>
+            </radialGradient>
+            <radialGradient id="innerShadow" cx="60%" cy="65%" r="60%">
+              <stop offset="0%" stop-color="#5A2A08" stop-opacity="0.4"/>
+              <stop offset="100%" stop-color="#5A2A08" stop-opacity="0"/>
+            </radialGradient>
+          </defs>
+
+          <!-- main cookie body -->
+          <circle cx="100" cy="100" r="88" fill="url(#cbase)"/>
+          <!-- inner shadow for depth -->
+          <circle cx="100" cy="100" r="88" fill="url(#innerShadow)"/>
+
+          <!-- surface cracks -->
+          <path d="M58 58 Q68 52 72 65 Q76 78 64 82 Q54 86 52 75" stroke="#7A3B14" stroke-width="1.8" stroke-linecap="round" fill="none" opacity=".5"/>
+          <path d="M108 42 Q122 44 120 60 Q118 72 132 74" stroke="#7A3B14" stroke-width="1.8" stroke-linecap="round" fill="none" opacity=".5"/>
+          <path d="M72 110 Q80 122 96 118 Q108 114 110 130" stroke="#7A3B14" stroke-width="1.6" stroke-linecap="round" fill="none" opacity=".4"/>
+          <path d="M134 96 Q144 106 140 120 Q136 134 150 138" stroke="#7A3B14" stroke-width="1.6" stroke-linecap="round" fill="none" opacity=".4"/>
+          <path d="M82 148 Q92 157 104 150 Q115 143 122 156" stroke="#7A3B14" stroke-width="1.5" stroke-linecap="round" fill="none" opacity=".38"/>
+          <path d="M42 95 Q50 88 55 98 Q60 108 50 114" stroke="#7A3B14" stroke-width="1.4" stroke-linecap="round" fill="none" opacity=".35"/>
+          <path d="M140 50 Q150 55 148 66 Q146 77 157 80" stroke="#7A3B14" stroke-width="1.4" stroke-linecap="round" fill="none" opacity=".35"/>
+
+          <!-- chocolate chips -->
+          <ellipse cx="60" cy="62" rx="11.5" ry="9.5" fill="url(#chip1)" transform="rotate(-20 60 62)"/>
+          <ellipse cx="57" cy="59" rx="4" ry="2.5" fill="#5A2A08" opacity="0.5" transform="rotate(-20 57 59)"/>
+          <ellipse cx="56" cy="58" rx="1.8" ry="1.1" fill="white" opacity=".18" transform="rotate(-20 56 58)"/>
+
+          <ellipse cx="118" cy="50" rx="10" ry="8.5" fill="url(#chip2)" transform="rotate(14 118 50)"/>
+          <ellipse cx="115" cy="47" rx="3.5" ry="2.2" fill="#5A2A08" opacity="0.5" transform="rotate(14 115 47)"/>
+          <ellipse cx="114" cy="46" rx="1.6" ry="1" fill="white" opacity=".18" transform="rotate(14 114 46)"/>
+
+          <ellipse cx="152" cy="86" rx="11" ry="9" fill="url(#chip1)" transform="rotate(-10 152 86)"/>
+          <ellipse cx="149" cy="83" rx="4" ry="2.5" fill="#5A2A08" opacity="0.5" transform="rotate(-10 149 83)"/>
+          <ellipse cx="148" cy="82" rx="1.8" ry="1.1" fill="white" opacity=".18" transform="rotate(-10 148 82)"/>
+
+          <ellipse cx="100" cy="97" rx="11" ry="9.5" fill="url(#chip2)" transform="rotate(22 100 97)"/>
+          <ellipse cx="97" cy="94" rx="4" ry="2.5" fill="#5A2A08" opacity="0.5" transform="rotate(22 97 94)"/>
+          <ellipse cx="96" cy="93" rx="1.8" ry="1.1" fill="white" opacity=".18" transform="rotate(22 96 93)"/>
+
+          <ellipse cx="134" cy="142" rx="10.5" ry="8.5" fill="url(#chip1)" transform="rotate(16 134 142)"/>
+          <ellipse cx="131" cy="139" rx="3.8" ry="2.2" fill="#5A2A08" opacity="0.5" transform="rotate(16 131 139)"/>
+          <ellipse cx="130" cy="138" rx="1.6" ry="1" fill="white" opacity=".18" transform="rotate(16 130 138)"/>
+
+          <ellipse cx="72" cy="142" rx="9.5" ry="8" fill="url(#chip2)" transform="rotate(-14 72 142)"/>
+          <ellipse cx="69" cy="139" rx="3.5" ry="2" fill="#5A2A08" opacity="0.5" transform="rotate(-14 69 139)"/>
+          <ellipse cx="68" cy="138" rx="1.5" ry="1" fill="white" opacity=".18" transform="rotate(-14 68 138)"/>
+
+          <ellipse cx="48" cy="112" rx="9" ry="7.5" fill="url(#chip1)" transform="rotate(8 48 112)"/>
+          <ellipse cx="45" cy="109" rx="3.2" ry="2" fill="#5A2A08" opacity="0.5" transform="rotate(8 45 109)"/>
+          <ellipse cx="44" cy="108" rx="1.4" ry="0.9" fill="white" opacity=".18" transform="rotate(8 44 108)"/>
+
+          <ellipse cx="100" cy="162" rx="9.5" ry="8" fill="url(#chip2)" transform="rotate(-6 100 162)"/>
+          <ellipse cx="97" cy="159" rx="3.5" ry="2" fill="#5A2A08" opacity="0.5" transform="rotate(-6 97 159)"/>
+          <ellipse cx="96" cy="158" rx="1.5" ry="1" fill="white" opacity=".18" transform="rotate(-6 96 158)"/>
+
+          <!-- rim -->
+          <circle cx="100" cy="100" r="88" stroke="#C4682A" stroke-width="1" fill="none" opacity=".25"/>
+        </svg>
         <div class="hfl hf1">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 3h6a4 4 0 014 4v14a3 3 0 00-3-3H2z"/><path d="M22 3h-6a4 4 0 00-4 4v14a3 3 0 013-3h7z"/></svg>
           <span>Vente au lycée !</span>
@@ -623,7 +705,9 @@ footer a:hover{color:var(--accent);}
     </div>
   </div>
   <div class="fbar" id="fbar"></div>
-  <div class="cgrid" id="menuGrid"><div class="loading-full"><div class="spinner"></div> Chargement…</div></div>
+  <div style="padding:2rem 4rem 4rem;">
+    <div class="cgrid" id="menuGrid"><div class="loading-full"><div class="spinner"></div> Chargement…</div></div>
+  </div>
   <footer style="margin-top:3rem;"><strong>Isaora's Cookies</strong> — Cayenne, Guyane 🇬🇫<br><span style="font-size:.74rem;">Paiement sur place · Cookie mi-cuit gourmand</span></footer>
 </div>
 
